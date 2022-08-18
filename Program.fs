@@ -4,12 +4,15 @@ open System.Diagnostics
 open System.Threading
 open System.IO
 
+let fontStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NeoTimeNix.colossal.flf")
+
+let font = FigletFont.Load fontStream
+
 let args = Environment.GetCommandLineArgs ()
 
 let dateFormat = if args.Length > 2 then args[2] else "yyyy-MM-dd"
 let timeFormat = if args.Length > 3 then args[3] else "HH:mm:ss"
 
-let font = FigletFont.Load "./colossal.flf"
 
 let write (color : Color) (text : string) =
     FigletText(font, text)

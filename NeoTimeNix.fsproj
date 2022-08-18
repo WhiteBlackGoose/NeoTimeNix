@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.44.0" />
-    <None Include="./colossal.flf" Path="./" />
+    <EmbeddedResource Include="./colossal.flf" />
   </ItemGroup>
 
 </Project>
