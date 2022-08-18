@@ -4,6 +4,13 @@ open System.Diagnostics
 open System.Threading
 open System.IO
 
+let args = Environment.GetCommandLineArgs()
+if Seq.contains "--generate-config" args then
+    Config.generateConfig()
+    printfn $"Config generated at {Config.configPath}"
+    Environment.Exit(0)
+
+
 let config = Config.getConfig ()
 
 let font =

@@ -17,7 +17,7 @@ let parse (text : string) : Map<string, string> =
         | [] -> Map.empty
         | "" :: rest -> innerParse rest
         | line :: rest ->
-            let key = line[..line.IndexOf '=']
+            let key = line[..line.IndexOf '=' - 1]
             let value = line[line.IndexOf '=' + 1 ..]
             innerParse rest
             |> Map.add key value
@@ -25,7 +25,7 @@ let parse (text : string) : Map<string, string> =
     |> List.ofArray
     |> innerParse
 
-let configPath = "~/.config/neotimenix.config"
+let configPath = $"/home/{System.Environment.UserName}/.config/neotimenix.config"
 
 let defaultDateFormat = "yyyy-MM-dd"
 let defaultTimeFormat = "HH:mm:ss"
@@ -47,7 +47,7 @@ let getConfig () =
         match text with
         | "true" -> true
         | "false" -> false
-        | _ -> raise (Exception ($"Unexpected bool {text}"))
+        | _ -> raise (System.Exception ($"Unexpected bool {text}"))
 
     if File.Exists configPath |> not then
         { dateFormat = defaultDateFormat
@@ -84,4 +84,14 @@ let getConfig () =
             }
         )
 
-
+let generateConfig () =
+    [
+        $"dateFormat={defaultDateFormat}"
+        $"timeFormat={defaultTimeFormat}"
+        $"dateColor={defaultDateColor}"
+        $"timeColor={defaultTimeColor}"
+        $"figletPath={defaultFigletPath}"
+        $"makeNewLine={defaultMakeNewLine}"
+    ]
+    |> String.concat "\n"
+    |> (fun text -> File.WriteAllText(configPath, text))
