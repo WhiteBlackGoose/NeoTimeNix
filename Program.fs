@@ -1,5 +1,3 @@
-#r "nuget:Spectre.Console,0.44.0"
-
 open Spectre.Console
 open System
 open System.Diagnostics
