@@ -4,15 +4,15 @@ open System.Diagnostics
 open System.Threading
 open System.IO
 
-let fontStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NeoTimeNix.colossal.flf")
+let config = Config.getConfig ()
 
-let font = FigletFont.Load fontStream
-
-let args = Environment.GetCommandLineArgs ()
-
-let dateFormat = if args.Length > 2 then args[2] else "yyyy-MM-dd"
-let timeFormat = if args.Length > 3 then args[3] else "HH:mm:ss"
-
+let font =
+    match config.figletPath with
+    | None ->
+        "NeoTimeNix.colossal.flf"
+        |> System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream
+        |> FigletFont.Load
+    | Some path -> FigletFont.Load path
 
 let write (color : Color) (text : string) =
     FigletText(font, text)
@@ -22,8 +22,13 @@ let write (color : Color) (text : string) =
 
 let rec run (): unit =
     Console.Clear ()
-    write Color.White (DateTime.Now.ToString(dateFormat))
-    write Color.Green (DateTime.Now.ToString(timeFormat))
+    if config.makeNewLine then
+        write config.dateColor (DateTime.Now.ToString config.dateFormat)
+        write config.timeColor (DateTime.Now.ToString config.timeFormat)
+    else
+        let wholeLine = DateTime.Now.ToString config.dateFormat + DateTime.Now.ToString config.timeFormat
+        // TODO: make it different colors for date and time?
+        write config.dateColor wholeLine
     Thread.Sleep(300)
     run ()
 
